@@ -9,8 +9,10 @@ function varargout = etfe(varargin)
     y = data.OutputData;
     u = data.InputData
     N = size(y,'r')
-    y1 = y((1:(N-1)/(n-1):N));u1 = u((1:(N-1)/(n-1):N))
-    y1($) = y(N);u1($) = u(N)
+    v = linspace(1,N,n)
+    y1 = y(v);u1 = u(v)
+    //y1 = y((1:(N-1)/(n-1):N));u1 = u((1:(N-1)/(n-1):N))
+    //y1($) = y(N);u1($) = u(N)
     data12 = [y1,u1]
     z = [fft(y1),fft(u1)]
     z = z/size(z,'r')
