@@ -61,8 +61,9 @@ function sys = estpoly(varargin)
     tempSum = na+nb+nc+nd+nf
     p0 = linspace(0.5,0.51,tempSum)';
     [var,errl] = lsqrsolve(p0,G,size(UDATA,"*"));
-    
+    disp(errl)    
     err = (norm(errl)^2);
+    disp(err)
     opt_err = err;
 	resid = G(var,[]);
     x = var
@@ -89,7 +90,7 @@ function yhat = _oestpolyfun(UDATA,x,na,nb,nc,nd,nf,nk)//(UDATA,x,nd,nc,nf,nb,nk
     c = poly([1; x(na+nb+1:na+nb+nc)]',"q","coeff");
     d = poly([1; x(na+nb+nc+1:na+nb+nc+nd)]',"q","coeff");
     f = poly([1; x(na+nb+nd+nc+1:na+nd+nc+nf+nb)]',"q","coeff");
-    bd = coeff(b*d); cf = coeff(c*f*a); fc_d = coeff(f*(c-a*d));
+    bd = coeff(b*d); cf = coeff(c*f); fc_d = coeff(f*(c-a*d));
     if size(bd,"*") == 1 then
         bd = repmat(0,nb+nd+1,1)
     end
@@ -107,8 +108,8 @@ function yhat = _oestpolyfun(UDATA,x,na,nb,nc,nd,nf,nk)//(UDATA,x,nd,nc,nf,nb,nk
             fc_dadd = fc_dadd + fc_d(i)*YDATA(k-i+1)
         end
         cfadd = 0
-        for i = 1:size(cf,"*")
-            cfadd = cfadd + cf(i)*yhat(k-i)
+        for i = 2:size(cf,"*")
+            cfadd = cfadd + cf(i)*yhat(k-i+1)
         end
         yhat = [yhat; [ bdadd + fc_dadd - cfadd ]];
     end
