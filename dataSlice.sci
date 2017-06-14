@@ -49,7 +49,7 @@ function sys = dataSlice(data,Start,End,Freq)
     elseif typeof(modelData) == 'iddata' then
         tempY = modelData.OutputData;tempU = modelData.InputData
         tempY = tempY(startData:Ts/freqData:endData,:);tempU = tempU(startData:Ts/freqData:endData,:)
-        temp = iddata(tempY,tempU,Ts)
+        temp = iddata(tempY,tempU,Ts/freqData)
         temp.TimeUnit = modelData.TimeUnit
     end
     sys = temp
