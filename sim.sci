@@ -55,6 +55,11 @@ function varargout = sim(varargin)
     
     bPoly = poly(modelData.b(length(modelData.b):-1:1),'z','coeff')
     sys = syslin('d',bPoly,afPoly)*extra
-    outputData = flts(inputData',sys)
-    varargout(1) = outputData'
+    outputData = (flts(inputData',sys))'
+    
+    if typeof(varargin(1)) == "iddata" then
+        outputData = iddata(outputData,[],varargin(1).Ts)
+        outputData.TimeUnit = varargin(1).TimeUnit
+    end
+    varargout(1) = outputData
 endfunction
