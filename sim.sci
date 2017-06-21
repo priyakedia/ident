@@ -56,5 +56,5 @@ function varargout = sim(varargin)
     bPoly = poly(modelData.b(length(modelData.b):-1:1),'z','coeff')
     sys = syslin('d',bPoly,afPoly)*extra
     outputData = flts(inputData',sys)
-    varargout(1) = outputData
+    varargout(1) = outputData'
 endfunction
