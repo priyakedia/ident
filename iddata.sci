@@ -7,6 +7,9 @@ function varargout = iddata(varargin)
     else
         error(msprintf(gettext("%s:Incorrect number of input arguments.\n"),"iddata"))
     end
+    if Ts <= 0 || typeof(Ts) <> 'constant' || ~size(Ts,'*') then
+        error(msprintf(gettext("%s:Inconsist sampling time ""Ts"", ""non negative real number"" expected.\n"),"iddata"))
+    end
     if rhs == 1 then
         OutputData = varargin(1)
         InputData = []
