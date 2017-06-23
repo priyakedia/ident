@@ -53,8 +53,12 @@ function iddataplot(varargin)
         end
         //disp(outputString)
         for ii = 1:secondIndex
-            
-            subplot(firstIndex,secondIndex,ii+secondIndex);plot2d(timeData,uData(:,ii),2)
+            if size(yData,'*') then
+                temp = 1
+            else
+                temp = 0
+            end
+            subplot(firstIndex,secondIndex,ii+secondIndex*temp);plot2d(timeData,uData(:,ii),2)
             //pause
             xtitle(outputString(ii))
         end
