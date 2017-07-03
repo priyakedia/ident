@@ -80,33 +80,3 @@ function varargout = iv(varargin)
     vcov = sigma2 * pinv((phif)' * phif)
     varargout(1) = idpoly([1; -theta(1:na)],[zeros(nk,1); theta(na+1:$)],1,1,1,1)
 endfunction
-
-
-    // saving the last flage
-//    if rhs == 3 then
-//        xFlage = varargin(3)
-//        //if typeof(xFlage) <> 'constant' || typeof(xFlage) <> 
-//    else
-//        xFlage = %T
-//    end
-//    if typeof(xFlage) == 'constant' then
-//        if size(xFlage,'r') <> size(uData,'r') then
-//            errmsg = msprintf(gettext("%s: dimensions of output must be equal to the dimensions of plant data "), "iv");
-//            error(errmsg);
-//        end
-//        xFlage = %F
-//    end
-//    if xFlage then
-//        
-//    else
-//        x = varargin(3)
-//    end
-//    arxModel = arx(plantData,[na nb nk])
-//    x = sim(uData,arxModel)
-//    n = varargin(2)
-//   // xFlag = varargin(3)
-
-    
-    // generatting the arx model
-
-    //pause
