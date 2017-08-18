@@ -60,11 +60,9 @@ function sys = arx(varargin)
     p0 = linspace(0.1,0.9,tempSum)';
     [var,errl] = lsqrsolve(p0,G,size(UDATA,"*"));
     err = (norm(errl)^2);
-//    disp(gg)
-//    [fopt, xopt] = optim(G,p0)
-//    disp(size(fopt))
     opt_err = err;
 	resid = G(var,[]);
+    
     a = 1-poly([var(nb+1:nb+na)]',"q","coeff");
     b = poly([repmat(0,nk,1);var(1:nb)]',"q","coeff");
     a = (poly([1,-coeff(a)],'q','coeff'))
@@ -74,17 +72,18 @@ function sys = arx(varargin)
     [temp1,temp2,temp3] = predict(z,t)
     [temp11,temp22,temp33] = pe(z,t)
     
-    estData = calModelPara(temp1/2,temp1/2,n(1)+n(2))
+    estData = calModelPara(temp1,temp1,n(1)+n(2))
     //pause
-    t.Report.Fit.MSE = estData.MSE 
-    t.Report.Fit.FPE = estData.FPE
+       t.Report.Fit.MSE = estData.MSE 
+       t.Report.Fit.FPE = estData.FPE
     t.Report.Fit.FitPer = estData.FitPer
-    t.Report.Fit.AIC = estData.AIC
-    t.Report.Fit.AICc = estData.AICc
-    t.Report.Fit.nAIC = estData.nAIC
-    t.Report.Fit.BIC = estData.BIC
-    sys = t
-    sys.TimeUnit = unit
+       t.Report.Fit.AIC = estData.AIC
+      t.Report.Fit.AICc = estData.AICc
+      t.Report.Fit.nAIC = estData.nAIC
+       t.Report.Fit.BIC = estData.BIC
+             t.TimeUnit = unit
+                    sys = t
+    
 endfunction
 
 function yhat = _objfunarx(UDATA,YDATA,x,na,nb,nk)

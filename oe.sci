@@ -63,7 +63,7 @@ function sys =  oe(varargin)
     UDATA = z(:,2);
     NDATA = size(UDATA,"*");
     function e = G(p,m)
-        e = YDATA - _objfun(UDATA,YDATA,p,nf,nb,nk);
+        e = YDATA - _objoefun(UDATA,YDATA,p,nf,nb,nk);
     endfunction
     tempSum = nf+nb
     p0 = linspace(0.04,0.041,tempSum)';
@@ -73,15 +73,28 @@ function sys =  oe(varargin)
 	resid = G(var,[]);
     f = poly([1; var(nb+1:nb+nf)],"q","coeff");
     b = poly([repmat(0,nk,1);var(1:nb)]',"q","coeff");
-    sys = idpoly(1,coeff(b),1,1,coeff(f),Ts)
-    sys.TimeUnit = unit
-//    p = struct('B',b,'F',f);
-//    disp('Discrete time model: y(t) = [B(x)/F(x)]u(t) + e(t)');
-//    theta_bj = p;
-//    disp(theta_bj);
+    t = idpoly(1,coeff(b),1,1,coeff(f),Ts)
+    
+    // estimating the other parameters
+    [temp1,temp2,temp3] = predict(z,t)
+    [temp11,temp22,temp33] = pe(z,t)
+    
+    estData = calModelPara(temp1,temp11,n(1)+n(2))
+    //pause
+       t.Report.Fit.MSE = estData.MSE 
+       t.Report.Fit.FPE = estData.FPE
+    t.Report.Fit.FitPer = estData.FitPer
+       t.Report.Fit.AIC = estData.AIC
+      t.Report.Fit.AICc = estData.AICc
+      t.Report.Fit.nAIC = estData.nAIC
+       t.Report.Fit.BIC = estData.BIC
+             t.TimeUnit = unit
+                    sys = t
+    //sys = t
+    //sys.TimeUnit = unit
 endfunction
 
-function yhat = _objfun(UDATA,YDATA,x,nf,nb,nk)
+function yhat = _objoefun(UDATA,YDATA,x,nf,nb,nk)
     x=x(:)
      q = poly(0,'q')
     tempSum = nb+nf

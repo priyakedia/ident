@@ -69,8 +69,23 @@ function sys = bj(varargin)
     c = poly([1; var(nb+1:nb+nc)]',"q","coeff");
     d = poly([1; var(nb+nc+1:nb+nc+nd)]',"q","coeff");
     f = poly([1; var(nb+nd+nc+1:nd+nc+nf+nb)]',"q","coeff");
-    sys = idpoly(1,coeff(b),coeff(c),coeff(d),coeff(f),Ts)
-    sys.TimeUnit = unit
+    t = idpoly(1,coeff(b),coeff(c),coeff(d),coeff(f),Ts)
+    
+    // estimating the other parameters
+    [temp1,temp2,temp3] = predict(z,t)
+    [temp11,temp22,temp33] = pe(z,t)
+    
+    estData = calModelPara(temp1,temp11,sum(n(1:4)))
+    //pause
+       t.Report.Fit.MSE = estData.MSE 
+       t.Report.Fit.FPE = estData.FPE
+    t.Report.Fit.FitPer = estData.FitPer
+       t.Report.Fit.AIC = estData.AIC
+      t.Report.Fit.AICc = estData.AICc
+      t.Report.Fit.nAIC = estData.nAIC
+       t.Report.Fit.BIC = estData.BIC
+             t.TimeUnit = unit
+                    sys = t
 endfunction
 
 function yhat = _objfun(UDATA,x,nd,nc,nf,nb,nk)
