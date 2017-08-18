@@ -1,5 +1,5 @@
 function []=Get(varargin)
-    disp('Get')
+    //disp('Get')
     tempData = varargin($)
     f = fieldnames(tempData)
 //    disp(size(f,'*'))
