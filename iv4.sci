@@ -53,5 +53,23 @@ function varargout = iv4(varargin)
     e = yData - ypred
     sigma2 = norm(e)^2/(size(yData,'r') - na - nb)
     vcov = sigma2 * pinv((phif)' * phif)
-    varargout(1) = idpoly([1; -theta(1:na)],[zeros(nk,1); theta(na+1:$)],1,1,1,Ts)
+    t = idpoly([1; theta(1:na)],[zeros(nk,1); theta(na+1:$)],1,1,1,Ts)
+    
+    // estimating the other parameters
+    [temp1,temp2,temp3] = predict(z,t)
+    [temp11,temp22,temp33] = pe(z,t)
+    
+    estData = calModelPara(temp1,temp11,na+nb)
+    //pause
+       t.Report.Fit.MSE = estData.MSE 
+       t.Report.Fit.FPE = estData.FPE
+    t.Report.Fit.FitPer = estData.FitPer
+       t.Report.Fit.AIC = estData.AIC
+      t.Report.Fit.AICc = estData.AICc
+      t.Report.Fit.nAIC = estData.nAIC
+       t.Report.Fit.BIC = estData.BIC
+             t.TimeUnit = unitData
+                    //sys = t
+    varargout(1) = t
+    //varargout(1) = idpoly([1; -theta(1:na)],[zeros(nk,1); theta(na+1:$)],1,1,1,Ts)
 endfunction
