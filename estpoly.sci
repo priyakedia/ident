@@ -59,11 +59,11 @@ function sys = estpoly(varargin)
         e = YDATA - _oestpolyfun(UDATA,p,na,nb,nc,nd,nf,nk);//_oestpolyfun(UDATA,p,nd,nc,nf,nb,nk);
     endfunction
     tempSum = na+nb+nc+nd+nf
-    p0 = linspace(0.5,0.51,tempSum)';
+    p0 = linspace(0.0001,0.001,tempSum)';
     [var,errl] = lsqrsolve(p0,G,size(UDATA,"*"));
-    disp(errl)    
+    //disp(errl)    
     err = (norm(errl)^2);
-    disp(err)
+    //disp(err)
     opt_err = err;
 	resid = G(var,[]);
     x = var
@@ -76,8 +76,27 @@ function sys = estpoly(varargin)
     c = poly([1; x(na+nb+1:na+nb+nc)]',"q","coeff");
     d = poly([1; x(na+nb+nc+1:na+nb+nc+nd)]',"q","coeff");
     f = poly([1; x(na+nb+nd+nc+1:na+nd+nc+nf+nb)]',"q","coeff");
-    sys = idpoly(coeff(a),coeff(b),coeff(c),coeff(d),coeff(f),Ts)
-    sys.TimeUnit = unit
+    t = idpoly(coeff(a),coeff(b),coeff(c),coeff(d),coeff(f),Ts)
+    
+        //t = sys;//idpoly(1,coeff(b),coeff(c),coeff(d),coeff(f),Ts)
+    
+    // estimating the other parameters
+    [temp1,temp2,temp3] = predict(z,t)
+    [temp11,temp22,temp33] = pe(z,t)
+    //pause
+    estData = calModelPara(temp1,temp11,na+nb+nc+nd+nf)
+    //pause
+       t.Report.Fit.MSE = estData.MSE 
+       t.Report.Fit.FPE = estData.FPE
+    t.Report.Fit.FitPer = estData.FitPer
+       t.Report.Fit.AIC = estData.AIC
+      t.Report.Fit.AICc = estData.AICc
+      t.Report.Fit.nAIC = estData.nAIC
+       t.Report.Fit.BIC = estData.BIC
+             t.TimeUnit = unit
+                    sys = t
+    
+    //sys.TimeUnit = unit
 endfunction
 
 function yhat = _oestpolyfun(UDATA,x,na,nb,nc,nd,nf,nk)//(UDATA,x,nd,nc,nf,nb,nk)
@@ -111,6 +130,7 @@ function yhat = _oestpolyfun(UDATA,x,na,nb,nc,nd,nf,nk)//(UDATA,x,nd,nc,nf,nb,nk
         for i = 2:size(cf,"*")
             cfadd = cfadd + cf(i)*yhat(k-i+1)
         end
+        //pause
         yhat = [yhat; [ bdadd + fc_dadd - cfadd ]];
     end
 endfunction
