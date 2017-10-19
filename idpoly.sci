@@ -36,7 +36,11 @@ function sys = idpoly(varargin)
     elseif F(1,1) ~= 1 then
         error(msprintf(gettext("%s: The first coefficient of ""F(z)"" polynomial must be 1.\n"),"idpoly"))
     end
-    t = tlist(['idpoly','a','b','c','d','f','Variable','TimeUnit','Ts'],A,B,C,D,F,'z^-1','seconds',Ts)
+    report = struct('MSE',0,'FPE',0,'FitPer',0,'AIC',0,'AICc',0,'nAIC',0,'BIC',0)
+    errors = [0 0 0]
+    report = struct('Fit',report,'Uncertainty',errors)
+    t = tlist(['idpoly','a','b','c','d','f','Variable','TimeUnit','Ts','Report'],A,B,C,D,F,'z^-1','seconds',Ts,report)
+    //t = tlist(['idpoly','a','b','c','d','f','Variable','TimeUnit','Ts'],A,B,C,D,F,'z^-1','seconds',Ts)
     
     sys = t
 endfunction
@@ -88,13 +92,31 @@ function %idpoly_p(mytlist)
     if mytlist.Ts == -1 then
         mprintf('undefined')
     else
-        if ~(ceil(mytlist.Ts)-mytlist.Ts) then
+        if (ceil(mytlist.Ts)-mytlist.Ts) == 0 then
             mprintf('%d %s',mytlist.Ts,mytlist.TimeUnit)
         else
-            mprintf('%.0000f %s',mytlist.Ts,mytlist.TimeUnit)
+            mprintf('%0.4f %s',mytlist.Ts,mytlist.TimeUnit)
         end
     end
+    //disp(mytlist.Ts)
     mprintf('\n')
+    if mytlist.Report.Fit.MSE then
+        temp = ['MSE','FPE','FitPer','AIC','AICc','nAIC','BIC']
+        spaces = ' '
+        for ii = 1:size(temp,'c')
+            digiLength = length(string(round(mytlist.Report.Fit(temp(ii)))))
+            digiLength = digiLength + 5-length(temp(ii))
+            blank = ''
+            for jj = 1:digiLength+1
+                blank = blank + " "
+            end
+            spaces = spaces+blank+temp(ii)+' '
+        end
+        mprintf('\n')
+        mprintf(spaces)
+        mprintf("\n  %.4f  %.4f  %.4f  %.4f  %.4f  %.4f  %.4f",mytlist.Report.Fit.MSE,mytlist.Report.Fit.FPE,mytlist.Report.Fit.FitPer,mytlist.Report.Fit.AIC,mytlist.Report.Fit.AICc,mytlist.Report.Fit.nAIC,mytlist.Report.Fit.BIC)
+    end
+    
         
 endfunction
 
